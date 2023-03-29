@@ -47,7 +47,12 @@ public abstract class Ship implements Serializable {
         this.cargoManifest = cargoManifest;
     }
     //=======================================
-    abstract int highestSerialNumber(); //atrybut klasowy (implementowany w klasach pochodnych)
+    abstract int highestSerialNumber();
+    //=======================================
+    //atrybut klasowy
+    abstract Person getCoordinator();
+
+
     //=======================================
     public int getCargoQuantity() {
         return cargoManifest.size();

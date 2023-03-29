@@ -15,7 +15,7 @@ public class CivilianShip extends Ship{
     }
     //=====================================================
     @Override
-    public int highestSerialNumber() {//atrybut klasowy
+    public int highestSerialNumber() {
         Integer serialNumber = null;
         for(CivilianShip civShip : getCivilianShipFleet()){
             if(serialNumber == null) serialNumber = civShip.getSerialNumber();
@@ -26,6 +26,21 @@ public class CivilianShip extends Ship{
             }
         }
         return serialNumber;
+    }
+
+    //=====================================================
+    //atrybut klasowy
+    static Person coordinator;
+
+    @Override
+    public Person getCoordinator() {
+        return coordinator;
+    }
+    public static void setCoordinatorStatic(Person coordinator) {
+        CivilianShip.coordinator = coordinator;
+    }
+    public static Person getCoordinatorStatic() {
+        return coordinator;
     }
 
     //=====================================================
