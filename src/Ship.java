@@ -1,21 +1,33 @@
 import java.io.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Ship implements Serializable {
-    private static Set<Ship> fleet; //ekstensja klasy
-    public Ship(){
+    private static Set<Ship> fleet = new HashSet<>(); //ekstensja klasy
+    public Ship(Reactor reactor, String shipName, String prefixName){
+        this.shipName = shipName;
+        this.prefixName = prefixName;
         Ship.fleet.add(this);
         this.serialNumber = highestSerialNumber() + 1;
+        this.setShipReactor(reactor);
     }
     public static Set<Ship> getFleet() {
         return fleet;
     }
+
     //=======================================
     //trwałość ekstensji klasy
-    public abstract void writeExtensionToFile(ObjectOutputStream stream) throws IOException;
-    public abstract void readExtensionFromFile(ObjectInputStream stream) throws IOException, ClassNotFoundException;
+//    public static void writeExtensionToFile() throws IOException {
+//    }
+//
+//    public static void readExtensionFromFile() throws IOException, ClassNotFoundException {
+//    }
+
     //=======================================
     private Reactor shipReactor; //atrybut złożony (nieopcjonalny)
     public Reactor getShipReactor() {
@@ -47,7 +59,7 @@ public abstract class Ship implements Serializable {
         this.cargoManifest = cargoManifest;
     }
     //=======================================
-    abstract int highestSerialNumber();
+    public abstract int highestSerialNumber();
     //=======================================
     //atrybut klasowy
     abstract Person getCoordinator();
@@ -72,9 +84,34 @@ public abstract class Ship implements Serializable {
     }
     //======================================
     public abstract String getDescription();
+    //======================================
+    public static String mostFrequentCargoShip(){ // metoda klasowa
+        Map<String, List<String>> cargoCounter = new HashMap<>();
+        for(Ship ship : getFleet()){
+            for(String cargo : ship.getCargoManifest()){
+                if(!cargoCounter.containsKey(cargo)) cargoCounter.put(cargo, new LinkedList<>());
+                cargoCounter.get(cargo).add(cargo);
+            }
+        }
+        String mostFrequentCargo = null;
+        for(String cargo : cargoCounter.keySet()){
+            if(mostFrequentCargo != null){
+                if(cargoCounter.get(cargo).size() > cargoCounter.get(mostFrequentCargo).size()){
+                    mostFrequentCargo = cargo;
+                }
+            }
+            else{
+                mostFrequentCargo = cargo;
+            }
+        }
+        return mostFrequentCargo;
+    }
 
 
-
+    @Override
+    public String toString(){
+        return this.prefixName + " " + this.shipName;
+    }
 
 
 

@@ -1,12 +1,16 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CivilianShip extends Ship{
-    private static Set<CivilianShip> fleet; //ekstensja klasy
-    public CivilianShip(){
-        super();
+    private static Set<CivilianShip> fleet = new HashSet<>(); //ekstensja klasy
+    public CivilianShip(Reactor reactor, String shipName, String prefixName){
+        super(reactor, shipName, prefixName);
         CivilianShip.fleet.add(this);
     }
 
@@ -14,11 +18,12 @@ public class CivilianShip extends Ship{
         return CivilianShip.fleet;
     }
     //=====================================================
+    static final int startingSerialNumber = 0;
     @Override
     public int highestSerialNumber() {
-        Integer serialNumber = null;
+        Integer serialNumber = startingSerialNumber;
         for(CivilianShip civShip : getCivilianShipFleet()){
-            if(serialNumber == null) serialNumber = civShip.getSerialNumber();
+            if(serialNumber == 0) serialNumber = civShip.getSerialNumber();
             else {
                 if(civShip.getSerialNumber() > serialNumber){
                     serialNumber = civShip.getSerialNumber();
@@ -26,6 +31,14 @@ public class CivilianShip extends Ship{
             }
         }
         return serialNumber;
+    }
+    public static int getHighestSerialNumber(){
+        try {
+            return new ArrayList<>(getCivilianShipFleet()).get(0).highestSerialNumber();
+        }
+        catch(NullPointerException ex){
+            return startingSerialNumber;
+        }
     }
 
     //=====================================================
@@ -44,7 +57,7 @@ public class CivilianShip extends Ship{
     }
 
     //=====================================================
-    public static String mostFrequentCargo(){ // metoda klasowa
+    public static String mostFrequentCargoCivilianShip(){ // metoda klasowa
         Map<String, List<String>> cargoCounter = new HashMap<>();
         for(CivilianShip ship : getCivilianShipFleet()){
             for(String cargo : ship.getCargoManifest()){
@@ -73,17 +86,25 @@ public class CivilianShip extends Ship{
     //=====================================================
     //trwałość ekstensji klasy
 
-    @Override
-    public void writeExtensionToFile(ObjectOutputStream stream) throws IOException {
+    public static void writeExtensionToFile() throws IOException {
+        ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(new File("civilian.data")));
         stream.writeObject(getCivilianShipFleet());
         stream.flush();
         stream.close();
+        ObjectOutputStream streamCoordinator = new ObjectOutputStream(new FileOutputStream(new File("civilianCoordinator.data")));
+        streamCoordinator.writeObject(getCoordinatorStatic());
+        streamCoordinator.flush();
+        streamCoordinator.close();
     }
 
-    @Override
-    public void readExtensionFromFile(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    public static void readExtensionFromFile() throws IOException, ClassNotFoundException {
+        ObjectInputStream stream = new ObjectInputStream(new FileInputStream(new File("civilian.data")));
         CivilianShip.fleet = (Set<CivilianShip>) stream.readObject();
         Ship.getFleet().addAll(CivilianShip.getCivilianShipFleet());
+        stream.close();
+        ObjectInputStream streamCoordinator = new ObjectInputStream(new FileInputStream(new File("civilianCoordinator.data")));
+        CivilianShip.setCoordinatorStatic((Person) streamCoordinator.readObject());
+        streamCoordinator.close();
     }
 
 }
