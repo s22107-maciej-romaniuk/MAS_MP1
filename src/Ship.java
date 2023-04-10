@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Ship implements Serializable {
+public abstract class Ship extends ObjectPlusPlus implements Serializable {
     private static Set<Ship> fleet = new HashSet<>(); //ekstensja klasy
     public Ship(Reactor reactor, String shipName, String prefixName){
         this.shipName = shipName;
@@ -113,7 +114,110 @@ public abstract class Ship implements Serializable {
         return this.prefixName + " " + this.shipName;
     }
 
+    //===========================================================================
+    //ustawianie liczności
+    public static void initializeCardinalities(){
+        setRoleCardinality("Składa się z", Integer.MAX_VALUE);
+        setRoleCardinality("Zatrudnia", Integer.MAX_VALUE);
+        setRoleCardinality("Brał udział w L", Integer.MAX_VALUE);
 
+        setRoleCardinality("Wchodzi w skład", 1);
+    }
 
+    //===========================================================================
+    //kompozycja
+    public void createModule(String description) throws Exception {
+        this.addModule(new Module(description));
+    }
 
+    private void addModule(Module module) throws Exception {
+        this.addPart("Składa się z", "Wchodzi w skład", module);
+    }
+    public void removeModule(Module module) throws Exception {
+        this.removePart("Składa się z", "Wchodzi w skład", module);
+    }
+    public List<Module> getModules() throws Exception {
+        return getLinksInType("Składa się z");
+    }
+
+    public void showModules(PrintStream stream) throws Exception {
+        this.showLinks("Składa się z", stream);
+    }
+
+    class Module extends ObjectPlusPlus{ //nie trzeba tutaj asocjacji w drugą stronę implementować bo to klasa wewnętrzna, i sam ten fakt już nam to zapewnia
+        String moduleName;
+
+        public Module(String name) {
+            this.moduleName = name;
+        }
+
+        @Override
+        public String toString(){
+            return "Module: " + this.moduleName;
+        }
+    }
+
+    //============================================================================
+    //asocjacja kwalifikowana
+    public void addCrewman(Person crewman, String jobName) throws Exception {
+        this.addLink("Zatrudnia", "Jest zatrudniony w", crewman, jobName);
+    }
+
+    public void removeCrewman(Person crewman, String jobName){
+        if(crewman != null && jobName != null){
+            this.removeLink("Zatrudnia", "Jest zatrudniony w", crewman, jobName);
+        }
+    }
+    public void removeCrewman(String jobName) throws Exception {
+        if(jobName != null){
+            Person crewman = (Person) this.getLinkedObject("Zatrudnia", jobName);
+            this.removeLink("Zatrudnia", "Jest zatrudniony w", crewman, jobName);
+        }
+    }
+
+    public Person getCrewman(String jobName) throws Exception {
+        return (Person) this.getLinkedObject("Zatrudnia", jobName);
+    }
+
+    public List<Person> getCrewmenList() throws Exception {
+        return getLinksInType("Zatrudnia");
+    }
+
+    public void showCrewmen(PrintStream stream) throws Exception {
+        this.showLinks("Zatrudnia", stream);
+    }
+
+    //============================================================================
+    //asocjacja z atrybutem
+    public void addIncident(Incident incident, Activity activity) throws Exception {
+        this.addLink("Brał udział w L", "Zrzeszał L", activity);
+        activity.addLink("Brał udział w R", "Zrzeszał R", incident);
+    }
+
+    public void removeIncident(Incident incident) throws Exception {
+        for (ObjectPlusPlus activity : getLinks("Brał udział w L")) {
+            if(activity.getLinkedObject("Brał udział w R", incident) == incident){
+                this.removeLink("Brał udział w L", "Zrzeszał L", activity);
+                activity.removeLink("Brał udział w R", "Zrzeszał R", incident);
+            }
+        }
+    }
+
+    public Map<Incident, Activity> getActivityToIncidentsMap() throws Exception {
+        List<Activity> activities = this.getLinksInType("Brał udział w L");
+        Map<Activity, Incident> activityToIncident = new HashMap<>();
+
+        for(Activity activity : activities){
+            activityToIncident.put(activity, (Incident) activity.getLinksInType("Brał udział w R").get(0));
+        }
+        return invertMapUsingStreams(activityToIncident);
+    }
+
+    public void showIncidentsWithActivityDescription(PrintStream stream) throws Exception {
+        Map<Incident, Activity> incidentActivityMap = this.getActivityToIncidentsMap();
+        for(Incident incident : incidentActivityMap.keySet()){
+            stream.println(incident);
+            stream.println("   " + incidentActivityMap.get(incident));
+        }
+    }
 }
