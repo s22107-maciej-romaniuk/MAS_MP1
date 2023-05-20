@@ -12,7 +12,7 @@ public class MainRead {
 
         System.out.println(CivilianShip.getCoordinatorStatic().firstName);
         System.out.println(CivilianShip.getFleet());
-        System.out.println(CivilianShip.getHighestSerialNumber());
+        //System.out.println(CivilianShip.getHighestSerialNumber());
         System.out.println(CivilianShip.mostFrequentCargoCivilianShip());
         System.out.println(CivilianShip.mostFrequentCargoShip());
     }

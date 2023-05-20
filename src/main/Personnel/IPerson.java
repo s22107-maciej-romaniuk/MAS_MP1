@@ -8,6 +8,8 @@ public interface IPerson {
     @Override
     String toString();
 
+    String getName() throws Exception;
+
     void addService(Ship ship, String jobName) throws Exception;
 
     void removeService(Ship ship, String jobName) throws UnfitForServiceException;

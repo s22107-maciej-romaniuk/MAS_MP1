@@ -1,5 +1,6 @@
 package main;
 
+import main.Modularity.Module;
 import main.Personnel.Person;
 
 import java.io.*;
@@ -11,13 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Ship extends ObjectPlusPlus implements IShip {
+public abstract class Ship extends ObjectPlusPlus {
     private static Set<Ship> fleet = new HashSet<>(); //ekstensja klasy
     public Ship(Reactor reactor, String shipName, String prefixName) throws Exception {
         this.shipName = shipName;
         this.prefixName = prefixName;
         Ship.fleet.add(this);
-        this.serialNumber = highestSerialNumber() + 1;
         this.setShipReactor(reactor);
     }
 
@@ -68,49 +68,45 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
 
     //=======================================
     private Reactor shipReactor; //atrybut złożony (nieopcjonalny)
-    @Override
+
     public Reactor getShipReactor() {
         return shipReactor;
     }
-    @Override
+
     public void setShipReactor(Reactor shipReactor) {
         if(shipReactor == null) throw new NullPointerException("Ship must have a reactor");
         this.shipReactor = shipReactor;
     }
     //=======================================
-    private int serialNumber; //atrybut prosty
-    @Override
-    public int getSerialNumber() {
-        return serialNumber;
-    }
-    //=======================================
     private Date lastMaintenanceDate; //atrybut opcjonalny
-    @Override
+
     public Date getLastMaintenanceDate() {
         return lastMaintenanceDate;
     }
-    @Override
+
     public void setLastMaintenanceDate(Date lastMaintenanceDate) {
         this.lastMaintenanceDate = lastMaintenanceDate;
     }
     //=======================================
     private List<String> cargoManifest; //atrybut powtarzalny
-    @Override
+
     public List<String> getCargoManifest() {
         return cargoManifest;
     }
-    @Override
+
     public void setCargoManifest(List<String> cargoManifest) {
         this.cargoManifest = cargoManifest;
     }
 
     //=======================================
     //atrybut klasowy
-    abstract Person getCoordinator();
-
+    //protected abstract Person getCoordinator();
+    public String getDescription() throws Exception {
+        return "Abstract";
+    }
 
     //=======================================
-    @Override
+
     public int getCargoQuantity() {
         return cargoManifest.size();
     } //atrybut pochodny
@@ -118,13 +114,13 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
     public String shipName;
     public String prefixName;
 
-    @Override
+
     public void setNewName(String nameWithPrefix){ //przeciążenie
         String[] x = nameWithPrefix.split(" ");
         this.shipName = x[1];
         this.prefixName = x[0];
     }
-    @Override
+
     public void setNewName(String name, String prefixName){
         this.shipName = name;
         this.prefixName = prefixName;
@@ -138,55 +134,55 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
 
     //===========================================================================
     //kompozycja
-    @Override
-    public void createModule(String description) throws Exception {
-        this.addModule(new Module(description));
-    }
+
+//    public void createModule(String description) throws Exception {
+//        this.addModule(new Module(description));
+//    }
 
     private void addModule(Module module) throws Exception {
-        this.addPart("Składa się z", "Wchodzi w skład", module);
+        this.addLink("Składa się z", "Wchodzi w skład", module);
     }
-    @Override
+
     public void removeModule(Module module) throws Exception {
-        this.removePart("Składa się z", "Wchodzi w skład", module);
+        this.removeLink("Składa się z", "Wchodzi w skład", module);
     }
-    @Override
+
     public List<Module> getModules() throws Exception {
         return getLinksInType("Składa się z");
     }
 
-    @Override
+
     public void showModules(PrintStream stream) throws Exception {
         this.showLinks("Składa się z", stream);
     }
 
-    public class Module extends ObjectPlusPlus{ //nie trzeba tutaj asocjacji w drugą stronę implementować bo to klasa wewnętrzna, i sam ten fakt już nam to zapewnia
-        String moduleName;
-
-        public Module(String name) {
-            this.moduleName = name;
-        }
-
-        @Override
-        public String toString(){
-            return "Module: " + this.moduleName;
-        }
-    }
+//    public class Module extends ObjectPlusPlus{ //nie trzeba tutaj asocjacji w drugą stronę implementować bo to klasa wewnętrzna, i sam ten fakt już nam to zapewnia
+//        String moduleName;
+//
+//        public Module(String name) {
+//            this.moduleName = name;
+//        }
+//
+//        @Override
+//        public String toString(){
+//            return "Module: " + this.moduleName;
+//        }
+//    }
 
     //============================================================================
     //asocjacja kwalifikowana
-    @Override
+
     public void addCrewman(Person crewman, String jobName) throws Exception {
         this.addLink("Zatrudnia", "Jest zatrudniony w", crewman, jobName);
     }
 
-    @Override
+
     public void removeCrewman(Person crewman, String jobName){
         if(crewman != null && jobName != null){
             this.removeLink("Zatrudnia", "Jest zatrudniony w", crewman, jobName);
         }
     }
-    @Override
+
     public void removeCrewman(String jobName) throws Exception {
         if(jobName != null){
             Person crewman = (Person) this.getLinkedObject("Zatrudnia", jobName);
@@ -194,30 +190,30 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
         }
     }
 
-    @Override
+
     public Person getCrewman(String jobName) throws Exception {
         return (Person) this.getLinkedObject("Zatrudnia", jobName);
     }
 
-    @Override
+
     public List<Person> getCrewmenList() throws Exception {
         return getLinksInType("Zatrudnia");
     }
 
-    @Override
+
     public void showCrewmen(PrintStream stream) throws Exception {
         this.showLinks("Zatrudnia", stream);
     }
 
     //============================================================================
     //asocjacja z atrybutem
-    @Override
+
     public void addIncident(Incident incident, Activity activity) throws Exception {
         this.addLink("Brał udział w L", "Zrzeszał L", activity);
         activity.addLink("Brał udział w R", "Zrzeszał R", incident);
     }
 
-    @Override
+
     public void removeIncident(Incident incident) throws Exception {
         for (ObjectPlusPlus activity : getLinks("Brał udział w L")) {
             if(activity.getLinkedObject("Brał udział w R", incident) == incident){
@@ -227,7 +223,7 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
         }
     }
 
-    @Override
+
     public Map<Incident, Activity> getActivityToIncidentsMap() throws Exception {
         List<Activity> activities = this.getLinksInType("Brał udział w L");
         Map<Activity, Incident> activityToIncident = new HashMap<>();
@@ -238,7 +234,7 @@ public abstract class Ship extends ObjectPlusPlus implements IShip {
         return invertMapUsingStreams(activityToIncident);
     }
 
-    @Override
+
     public void showIncidentsWithActivityDescription(PrintStream stream) throws Exception {
         Map<Incident, Activity> incidentActivityMap = this.getActivityToIncidentsMap();
         for(Incident incident : incidentActivityMap.keySet()){

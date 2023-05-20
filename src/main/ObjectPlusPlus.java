@@ -1,6 +1,7 @@
 package main;
 
 import main.CustomExceptions.NoLinkException;
+import main.CustomExceptions.PartException;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -104,7 +105,7 @@ public abstract class ObjectPlusPlus implements Serializable {
         if(links.containsKey(roleName)) {
             // Get the links
             objectLinks = links.get(roleName);
-            if(!objectLinks.containsKey(qualifier)) {
+            if(objectLinks.containsKey(qualifier)) {
                 // Add a link for the target object
                 objectLinks.remove(qualifier, targetObject);
 
@@ -151,7 +152,7 @@ public abstract class ObjectPlusPlus implements Serializable {
     protected void addPart(String roleName, String reverseRoleName, ObjectPlusPlus partObject) throws Exception {
         // Check if the part exist somewhere
         if(allParts.contains(partObject)) {
-            throw new Exception("The part is already connected to a whole!");
+            throw new PartException("The part is already connected to a whole!");
         }
 
         addLink(roleName, reverseRoleName, partObject);
@@ -162,7 +163,7 @@ public abstract class ObjectPlusPlus implements Serializable {
     protected void removePart(String roleName, String reverseRoleName, ObjectPlusPlus partObject) throws Exception {
         // Check if the part exist somewhere
         if(!allParts.contains(partObject)) {
-            throw new Exception("The part is not connected to a whole!");
+            throw new PartException("The part is not connected to a whole!");
         }
 
         removeLink(roleName, reverseRoleName, partObject);
@@ -315,5 +316,10 @@ public abstract class ObjectPlusPlus implements Serializable {
                                    .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         return inversedMap;
     }
+
+//    public <T> List<T> getCastedLinks(String roleName){
+//        List<T> castedLinks = new LinkedList<T>();
+//        foreach(ObjectPlusPlus object : this.getLi)
+//    }
 
 }

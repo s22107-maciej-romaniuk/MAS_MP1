@@ -22,36 +22,36 @@ public class CivilianShip extends Ship{
     }
     //=====================================================
     static final int startingSerialNumber = 0;
-    @Override
-    public int highestSerialNumber() {
-        Integer serialNumber = startingSerialNumber;
-        for(CivilianShip civShip : getCivilianShipFleet()){
-            if(serialNumber == 0) serialNumber = civShip.getSerialNumber();
-            else {
-                if(civShip.getSerialNumber() > serialNumber){
-                    serialNumber = civShip.getSerialNumber();
-                }
-            }
-        }
-        return serialNumber;
-    }
-    public static int getHighestSerialNumber(){
-        try {
-            return new ArrayList<>(getCivilianShipFleet()).get(0).highestSerialNumber();
-        }
-        catch(NullPointerException ex){
-            return startingSerialNumber;
-        }
-    }
+//    @Override
+//    public int highestSerialNumber() {
+//        Integer serialNumber = startingSerialNumber;
+//        for(CivilianShip civShip : getCivilianShipFleet()){
+//            if(serialNumber == 0) serialNumber = civShip.getSerialNumber();
+//            else {
+//                if(civShip.getSerialNumber() > serialNumber){
+//                    serialNumber = civShip.getSerialNumber();
+//                }
+//            }
+//        }
+//        return serialNumber;
+//    }
+//    public static int getHighestSerialNumber(){
+//        try {
+//            return new ArrayList<>(getCivilianShipFleet()).get(0).highestSerialNumber();
+//        }
+//        catch(NullPointerException ex){
+//            return startingSerialNumber;
+//        }
+//    }
 
     //=====================================================
     //atrybut klasowy
     static Person coordinator;
 
-    @Override
-    public Person getCoordinator() {
-        return coordinator;
-    }
+//    @Override
+//    public Person getCoordinator() {
+//        return coordinator;
+//    }
     public static void setCoordinatorStatic(Person coordinator) {
         CivilianShip.coordinator = coordinator;
     }

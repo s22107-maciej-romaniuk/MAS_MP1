@@ -3,8 +3,6 @@ package main.Personnel;
 import main.CustomExceptions.NoLinkException;
 import main.CustomExceptions.NotAnInstanceException;
 import main.ObjectPlusPlus;
-import main.Personnel.Affiliation.Civilian;
-import main.Personnel.Affiliation.Military;
 import main.Ship;
 
 import java.io.Serializable;
@@ -17,16 +15,24 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
     public Person(){
 
     }
-    public Person(String firstName, String lastName) {
+    public Person(String firstName, String lastName, Class civilianOrOverlapping, String arg) throws Exception {
         this.firstName = firstName;
         this.lastName = lastName;
+        if(civilianOrOverlapping == Civilian.class){
+            this.changeToCivilian(arg);
+        }
+        else if(civilianOrOverlapping == Military.class){
+            this.changeToMilitary(arg);
+        }
     }
 
     @Override
     public String toString(){
-        return "Person: " + firstName + " " + lastName;
+        return getName();
     }
 
+    @Override
+    public String getName() { return "Person: " + firstName + (lastName == null ? "" : " " + lastName);}
     //===========================================================================
     //ustawianie liczności
     public static void initializeCardinalities(){
@@ -57,24 +63,44 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
 
     @Override
     public void changeToCivilian(String employerName) throws Exception {
-        for(ObjectPlusPlus link : getLinks(KontraktL)){
-            this.removeLink(KontraktL, KontraktR, link);
+        try {
+            for (ObjectPlusPlus link : getLinks(KontraktL)) {
+                this.removePart(KontraktL, KontraktR, link);
+            }
+        }
+        catch(NoLinkException ex){
+            //do nothing
         }
         Civilian mode = new Civilian(employerName);
-        this.addLink(KontraktL, KontraktR, mode);
-        for(ObjectPlusPlus link : getLinks(SluzbaL)) {
-            this.removeLink(SluzbaL, SluzbaR, link);
+        this.addPart(KontraktL, KontraktR, mode);
+        try {
+            for(ObjectPlusPlus link : getLinks(SluzbaL)) {
+                this.removeLink(SluzbaL, SluzbaR, link);
+            }
+        }
+        catch(NoLinkException ex){
+            //do nothing
         }
     }
     @Override
     public void changeToMilitary(String rank) throws Exception {
-        for(ObjectPlusPlus link : getLinks(SluzbaL)) {
-            this.removeLink(SluzbaL, SluzbaR, link);
+        try {
+            for(ObjectPlusPlus link : getLinks(SluzbaL)) {
+                this.removePart(SluzbaL, SluzbaR, link);
+            }
+        }
+        catch(NoLinkException ex){
+            //do nothing
         }
         Military mode = new Military(rank);
-        this.addLink(SluzbaL, SluzbaR, mode);
-        for(ObjectPlusPlus link : getLinks(KontraktL)){
-            this.removeLink(KontraktL, KontraktR, link);
+        this.addPart(SluzbaL, SluzbaR, mode);
+        try {
+            for(ObjectPlusPlus link : getLinks(KontraktL)){
+                this.removeLink(KontraktL, KontraktR, link);
+            }
+        }
+        catch(NoLinkException ex){
+            //do nothing
         }
     }
 
@@ -83,7 +109,7 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(KontraktL);
             return ((Civilian) obj.get(0)).employerName;
-        } catch (NoLinkException e) {
+        } catch (NoLinkException | IndexOutOfBoundsException e) {
             throw new NotAnInstanceException("This person is not a civilian");
         }
     }
@@ -93,8 +119,25 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(SluzbaL);
             return ((Military) obj.get(0)).rank;
-        } catch (NoLinkException e) {
+        } catch (NoLinkException | IndexOutOfBoundsException e) {
             throw new NotAnInstanceException("This person is not in military");
+        }
+
+    }
+
+    public class Civilian extends ObjectPlusPlus {
+        public String employerName;
+
+        public Civilian(String employerName) {
+            this.employerName = employerName;
+        }
+    }
+
+    public class Military extends ObjectPlusPlus {
+        public String rank;
+
+        public Military(String rank) {
+            this.rank = rank;
         }
     }
 }

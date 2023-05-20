@@ -4,9 +4,6 @@ package main.Weaponry;
 import main.CustomExceptions.NoLinkException;
 import main.CustomExceptions.NotAnInstanceException;
 import main.ObjectPlusPlus;
-import main.Weaponry.FiringType.Kinetic;
-import main.Weaponry.FiringType.Laser;
-import main.Weaponry.FiringType.Rocket;
 import main.Weaponry.Operation.Automatic;
 import main.Weaponry.Operation.ManuallyOperated;
 
@@ -17,11 +14,16 @@ public class Weapon extends ObjectPlusPlus {
     int powerDraw; //watts
 
     public static void initializeCardinalities(){
-        setRoleCardinality(AutomatL, 1);
-        setRoleCardinality(ManualL, 1);
+//        setRoleCardinality(AutomatL, 1);
+//        setRoleCardinality(ManualL, 1);
+        setRoleCardinality("FireTypeL", 1);
         setRoleCardinality(LaserL, 1);
         setRoleCardinality(KineticL, 1);
         setRoleCardinality(RocketL, 1);
+        setRoleCardinality(LaserR, 1);
+        setRoleCardinality(KineticR, 1);
+        setRoleCardinality(RocketR, 1);
+        setRoleCardinality("WeaponR", 500);
     }
 
     public Weapon(String name, int powerDraw) {
@@ -29,38 +31,61 @@ public class Weapon extends ObjectPlusPlus {
         this.powerDraw = powerDraw;
     }
 
-    public void addAutomaticSteering(String softwareVersion, int powerDraw) throws Exception {
-        for(ObjectPlusPlus link : getLinks(AutomatL)){
-            this.removeLink(AutomatL, AutomatR, link);
-        }
-        Automatic mode = new Automatic(softwareVersion, powerDraw);
-        this.addLink(AutomatL, AutomatR, mode);
-    }
-    public void addManualSteering(int personnelCount) throws Exception {
-        for(ObjectPlusPlus link : getLinks(ManualL)){
-            this.removeLink(ManualL, ManualR, link);
-        }
-        ManuallyOperated mode = new ManuallyOperated(personnelCount);
-        this.addLink(ManualL, ManualR, mode);
+    public Weapon(String name, int powerDraw, Class fireTypeClass, int... args)
+            throws Exception {
+        this(name, powerDraw);
+        if(fireTypeClass == Kinetic.class) addKineticFireType(args[0], args[1], args[2]);
+        else if(fireTypeClass == Laser.class) addLaserFireType(args[0]);
+        else if(fireTypeClass == Rocket.class) addRocketFireType(args[0]);
     }
 
+//    public void addAutomaticSteering(String softwareVersion, int powerDraw) throws Exception {
+//        for(ObjectPlusPlus link : getLinks(AutomatL)){
+//            this.removeLink(AutomatL, AutomatR, link);
+//        }
+//        Automatic mode = new Automatic(softwareVersion, powerDraw);
+//        this.addLink(AutomatL, AutomatR, mode);
+//    }
+//    public void addManualSteering(int personnelCount) throws Exception {
+//        for(ObjectPlusPlus link : getLinks(ManualL)){
+//            this.removeLink(ManualL, ManualR, link);
+//        }
+//        ManuallyOperated mode = new ManuallyOperated(personnelCount);
+//        this.addLink(ManualL, ManualR, mode);
+//    }
+
     boolean isFireTypeSet = false;
-    private void removeFireTypes() throws NoLinkException {
-        for (ObjectPlusPlus link : getLinks(KineticL)) {
-            this.removeLink(KineticL, KineticR, link);
+    private void removeFireTypes() throws Exception {
+        try {
+            for (ObjectPlusPlus link : getLinks(KineticL)) {
+                this.removePart(KineticL, KineticR, link);
+            }
         }
-        for (ObjectPlusPlus link : getLinks(RocketL)) {
-            this.removeLink(RocketL, RocketR, link);
+        catch(NoLinkException nlexc){
+            //do nothing
         }
-        for (ObjectPlusPlus link : getLinks(LaserL)) {
-            this.removeLink(LaserL, LaserR, link);
+        try {
+            for (ObjectPlusPlus link : getLinks(RocketL)) {
+                this.removePart(RocketL, RocketR, link);
+            }
+        }
+        catch(NoLinkException nlexc){
+            //do nothing
+        }
+        try {
+            for (ObjectPlusPlus link : getLinks(LaserL)) {
+                this.removePart(LaserL, LaserR, link);
+            }
+        }
+        catch(NoLinkException nlexc){
+            //do nothing
         }
     }
     public void addKineticFireType(int projectileMass, int projectileSpeed, int rateOfFire) throws Exception {
         if(!isFireTypeSet) {
             this.removeFireTypes();
             Kinetic mode = new Kinetic(projectileMass, projectileSpeed, rateOfFire);
-            this.addLink(KineticL, KineticR, mode);
+            this.addPart(KineticL, KineticR, mode);
             this.isFireTypeSet = true;
         }
         else{
@@ -72,7 +97,7 @@ public class Weapon extends ObjectPlusPlus {
         if(!isFireTypeSet) {
             this.removeFireTypes();
             Laser mode = new Laser(frequency);
-            this.addLink(LaserL, LaserR, mode);
+            this.addPart(LaserL, LaserR, mode);
             this.isFireTypeSet = true;
         }
         else{
@@ -84,7 +109,7 @@ public class Weapon extends ObjectPlusPlus {
         if(!isFireTypeSet) {
             this.removeFireTypes();
             Rocket mode = new Rocket(warheadMass);
-            this.addLink(RocketL, RocketR, mode);
+            this.addPart(RocketL, RocketR, mode);
             this.isFireTypeSet = true;
         }
         else{
@@ -94,31 +119,71 @@ public class Weapon extends ObjectPlusPlus {
 
 
 
-    public String getSoftwareVersion() throws NotAnInstanceException {
-        try{
-            List<ObjectPlusPlus> obj = this.getLinks(AutomatL);
-            return ((Automatic) obj.get(0)).softwareVersion;
-        } catch (Exception e) {
-            throw new NotAnInstanceException("This weapon is not automatic");
-        }
-    }
-
-    public int getPersonnelCount() throws NotAnInstanceException {
-        try{
-            List<ObjectPlusPlus> obj = this.getLinks(ManualL);
-            return ((ManuallyOperated) obj.get(0)).personnelCount;
-        } catch (Exception e) {
-            throw new NotAnInstanceException("This weapon is not manually operated");
-        }
-    }
+//    public String getSoftwareVersion() throws NotAnInstanceException {
+//        try{
+//            List<ObjectPlusPlus> obj = this.getLinks(AutomatL);
+//            return ((Automatic) obj.get(0)).softwareVersion;
+//        } catch (Exception e) {
+//            throw new NotAnInstanceException("This weapon is not automatic");
+//        }
+//    }
+//
+//    public int getPersonnelCount() throws NotAnInstanceException {
+//        try{
+//            List<ObjectPlusPlus> obj = this.getLinks(ManualL);
+//            return ((ManuallyOperated) obj.get(0)).personnelCount;
+//        } catch (Exception e) {
+//            throw new NotAnInstanceException("This weapon is not manually operated");
+//        }
+//    }
 
     //polimorfizm przy _overlapping
     public int getPowerDraw(){
+        return this.powerDraw;
+    }
+
+    public int getProjectileMass() throws NotAnInstanceException {
         try{
-            List<ObjectPlusPlus> obj = this.getLinks(AutomatL);
-            return ((Automatic) obj.get(0)).powerDraw + this.powerDraw;
+            List<ObjectPlusPlus> obj = this.getLinks(KineticL);
+            return ((Kinetic) obj.get(0)).getProjectileMass();
         } catch (Exception e) {
-            return this.powerDraw;
+            throw new NotAnInstanceException("This weapon is not of kinetic fire type");
+        }
+    }
+
+    public int getProjectileSpeed() throws NotAnInstanceException {
+        try{
+            List<ObjectPlusPlus> obj = this.getLinks(KineticL);
+            return ((Kinetic) obj.get(0)).getProjectileSpeed();
+        } catch (Exception e) {
+            throw new NotAnInstanceException("This weapon is not of kinetic fire type");
+        }
+    }
+
+    public int getRateOfFire() throws NotAnInstanceException {
+        try{
+            List<ObjectPlusPlus> obj = this.getLinks(KineticL);
+            return ((Kinetic) obj.get(0)).getRateOfFire();
+        } catch (Exception e) {
+            throw new NotAnInstanceException("This weapon is not of kinetic fire type");
+        }
+    }
+
+    public int getFrequency() throws NotAnInstanceException {
+        try{
+            List<ObjectPlusPlus> obj = this.getLinks(LaserL);
+            return ((Laser) obj.get(0)).getFrequency();
+        } catch (Exception e) {
+            throw new NotAnInstanceException("This weapon is not of laser fire type");
+        }
+    }
+
+    public int getWarheadMass() throws NotAnInstanceException {
+        try{
+            List<ObjectPlusPlus> obj = this.getLinks(RocketL);
+            return ((Rocket) obj.get(0)).getWarheadMass();
+        } catch (Exception e) {
+            throw new NotAnInstanceException("This weapon is not of rocket fire type");
         }
     }
 
@@ -134,4 +199,61 @@ public class Weapon extends ObjectPlusPlus {
     private static String KineticR = "Kinetic R";
     private static String RocketL = "Rocket L";
     private static String RocketR = "Rocket R";
+
+    public String getName() {
+        return name;
+    }
+
+    public class Kinetic extends ObjectPlusPlus {
+        public int projectileMass;
+        public int projectileSpeed;
+        public int rateOfFire;
+
+        public Kinetic(int projectileMass, int projectileSpeed, int rateOfFire) {
+            this.projectileMass = projectileMass;
+            this.projectileSpeed = projectileSpeed;
+            this.rateOfFire = rateOfFire;
+        }
+
+        public int getProjectileMass() {
+            return projectileMass;
+        }
+
+        public int getProjectileSpeed() {
+            return projectileSpeed;
+        }
+
+        public int getRateOfFire() {
+            return rateOfFire;
+        }
+    }
+
+    public class Laser extends ObjectPlusPlus {
+        public int frequency;
+
+        public Laser(int frequency) {
+            this.frequency = frequency;
+        }
+
+        public int getFrequency() {
+            return frequency;
+        }
+    }
+
+    public class Rocket extends ObjectPlusPlus {
+        public int warheadMass;
+
+        public Rocket(int warheadMass) {
+            this.warheadMass = warheadMass;
+        }
+
+        public int getWarheadMass() {
+            return warheadMass;
+        }
+    }
+
+    @Override
+    public String toString(){
+        return "Weapon: " + this.getName();
+    }
 }

@@ -1,7 +1,7 @@
 package main;
 
+import main.Modularity.Module;
 import main.Personnel.Person;
-import main.Ship.Module;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -19,8 +19,6 @@ public interface IShip extends Serializable {
 
     void setShipReactor(Reactor shipReactor) throws Exception;
 
-    int getSerialNumber() throws Exception;
-
     Date getLastMaintenanceDate() throws Exception;
 
     void setLastMaintenanceDate(Date lastMaintenanceDate) throws Exception;
@@ -29,8 +27,6 @@ public interface IShip extends Serializable {
 
     void setCargoManifest(List<String> cargoManifest) throws Exception;
 
-    //=======================================
-    int highestSerialNumber() throws Exception;
 
     //=======================================
     int getCargoQuantity() throws Exception //atrybut pochodny
@@ -47,8 +43,8 @@ public interface IShip extends Serializable {
     String toString();
 
     //===========================================================================
-    //kompozycja
-    void createModule(String description) throws Exception;
+    //
+    //void createModule(String description) throws Exception;
 
     void removeModule(Module module) throws Exception;
 
