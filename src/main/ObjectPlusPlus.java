@@ -1,3 +1,7 @@
+package main;
+
+import main.CustomExceptions.NoLinkException;
+
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -117,11 +121,11 @@ public abstract class ObjectPlusPlus implements Serializable {
      * @param targetObject
      * @param qualifier
      */
-    protected void addLink(String roleName, String reverseRoleName, ObjectPlusPlus targetObject, Object qualifier)
+    public void addLink(String roleName, String reverseRoleName, ObjectPlusPlus targetObject, Object qualifier)
             throws Exception {
         addLink(roleName, reverseRoleName, targetObject, qualifier, 2);
     }
-    protected void removeLink(String roleName, String reverseRoleName, ObjectPlusPlus targetObject, Object qualifier) {
+    public void removeLink(String roleName, String reverseRoleName, ObjectPlusPlus targetObject, Object qualifier) {
         removeLink(roleName, reverseRoleName, targetObject, qualifier, 2);
     }
 
@@ -173,12 +177,12 @@ public abstract class ObjectPlusPlus implements Serializable {
      * @return
      * @throws Exception
      */
-    protected List<ObjectPlusPlus> getLinks(String roleName) throws Exception {
+    protected List<ObjectPlusPlus> getLinks(String roleName) throws NoLinkException {
         Map<Object, ObjectPlusPlus> objectLinks;
 
         if(!links.containsKey(roleName)) {
             // No links for the role
-            throw new Exception("No links for the role: " + roleName);
+            throw new NoLinkException("No links for the role: " + roleName);
         }
 
         objectLinks = links.get(roleName);
@@ -311,4 +315,5 @@ public abstract class ObjectPlusPlus implements Serializable {
                                    .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
         return inversedMap;
     }
+
 }

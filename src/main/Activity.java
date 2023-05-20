@@ -1,3 +1,5 @@
+package main;
+
 public class Activity extends ObjectPlusPlus{
 
     public String description;

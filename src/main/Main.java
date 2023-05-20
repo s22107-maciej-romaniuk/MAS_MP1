@@ -1,12 +1,13 @@
+package main;
+
+import main.Personnel.Person;
+
 import java.io.IOException;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Person civilianShipCoordinator = new Person();
         civilianShipCoordinator.firstName = "Maciej";
         civilianShipCoordinator.lastName = "Romaniuk";

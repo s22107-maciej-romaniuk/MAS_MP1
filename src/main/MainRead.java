@@ -1,6 +1,6 @@
+package main;
+
 import java.io.IOException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainRead {
     public static void main(String[] args) {

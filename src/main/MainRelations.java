@@ -1,9 +1,11 @@
+package main;
+
+import main.Personnel.Person;
+
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 
 public class MainRelations {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Ship.initializeCardinalities();
         Person.initializeCardinalities();
         Incident.initializeCardinalities();
@@ -23,7 +25,7 @@ public class MainRelations {
 
         try {
             kaczka.addCrewman(person1, "Pierwszy oficer");
-            person2.addEmployment(kaczka, "Kapitan");
+            person2.addService(kaczka, "Kapitan");
             kaczka.showCrewmen(System.out);
         } catch (Exception exception) {
             exception.printStackTrace();
