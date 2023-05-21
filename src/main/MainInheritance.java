@@ -43,18 +43,18 @@ public class MainInheritance {
 
         //multiaspect
         System.out.println("\n\n\n-------------Multiaspect-------------");
-        ManuallyOperated manualLaserWeapon = new ManuallyOperated("Manualny laser", 50, 2, Laser.class, 100);
-        Automatic automaticLaserWeapon = new Automatic("Automatyczny laser", 50, 50, "123.45beta", Laser.class, 200);
-        ManuallyOperated manualKineticWeapon = new ManuallyOperated("Manualna armata", 50, 2, Kinetic.class, 300, 400, 500);
-        Automatic automaticKineticWeapon = new Automatic("Automatyczna armata", 50, 50, "456.alfa", Kinetic.class, 600, 700, 800);
+        Weapon manualLaserWeapon = new ManuallyOperated("Manualny laser", 50, 2, Laser.class, 100);
+        Weapon automaticLaserWeapon = new Automatic("Automatyczny laser", 50, 50, "123.45beta", Laser.class, 200);
+        Weapon manualKineticWeapon = new ManuallyOperated("Manualna armata", 50, 2, Kinetic.class, 300, 400, 500);
+        Weapon automaticKineticWeapon = new Automatic("Automatyczna armata", 50, 50, "456.alfa", Kinetic.class, 600, 700, 800);
         System.out.println("Częstotliwość manualnego lasera: " + manualLaserWeapon.castLaser().getFrequency());
         System.out.println("Częstotliwość automatycznego lasera: " + automaticLaserWeapon.castLaser().getFrequency());
         System.out.println("Prędkość pocisku z manualnej armaty: " + manualKineticWeapon.castKinetic().getProjectileSpeed());
         System.out.println("Prędkość pocisku z automatycznej armaty: " + automaticKineticWeapon.castKinetic().getProjectileSpeed());
-        System.out.println("Ilość operatorów manualnego lasera: " + manualLaserWeapon.getPersonnelCount());
-        System.out.println("Wersja oprogramowania automatycznego lasera: " + automaticLaserWeapon.getSoftwareVersion());
-        System.out.println("Ilość operatorów manualnej armaty: " + manualKineticWeapon.getPersonnelCount());
-        System.out.println("Wersja oprogramowania automatycznej armaty: " + automaticKineticWeapon.getSoftwareVersion());
+        System.out.println("Ilość operatorów manualnego lasera: " + ((ManuallyOperated)manualLaserWeapon).getPersonnelCount());
+        System.out.println("Wersja oprogramowania automatycznego lasera: " + ((Automatic)automaticLaserWeapon).getSoftwareVersion());
+        System.out.println("Ilość operatorów manualnej armaty: " + ((ManuallyOperated)manualKineticWeapon).getPersonnelCount());
+        System.out.println("Wersja oprogramowania automatycznej armaty: " + ((Automatic)automaticKineticWeapon).getSoftwareVersion());
 
         //dynamic
         System.out.println("\n\n\n-------------Dynamic-------------");
