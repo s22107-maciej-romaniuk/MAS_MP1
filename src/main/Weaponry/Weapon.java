@@ -118,70 +118,31 @@ public class Weapon extends ObjectPlusPlus {
     }
 
 
-
-//    public String getSoftwareVersion() throws NotAnInstanceException {
-//        try{
-//            List<ObjectPlusPlus> obj = this.getLinks(AutomatL);
-//            return ((Automatic) obj.get(0)).softwareVersion;
-//        } catch (Exception e) {
-//            throw new NotAnInstanceException("This weapon is not automatic");
-//        }
-//    }
-//
-//    public int getPersonnelCount() throws NotAnInstanceException {
-//        try{
-//            List<ObjectPlusPlus> obj = this.getLinks(ManualL);
-//            return ((ManuallyOperated) obj.get(0)).personnelCount;
-//        } catch (Exception e) {
-//            throw new NotAnInstanceException("This weapon is not manually operated");
-//        }
-//    }
-
     //polimorfizm przy _overlapping
     public int getPowerDraw(){
         return this.powerDraw;
     }
 
-    public int getProjectileMass() throws NotAnInstanceException {
+    public Kinetic castKinetic() throws NotAnInstanceException {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(KineticL);
-            return ((Kinetic) obj.get(0)).getProjectileMass();
+            return ((Kinetic) obj.get(0));
         } catch (Exception e) {
             throw new NotAnInstanceException("This weapon is not of kinetic fire type");
         }
     }
-
-    public int getProjectileSpeed() throws NotAnInstanceException {
-        try{
-            List<ObjectPlusPlus> obj = this.getLinks(KineticL);
-            return ((Kinetic) obj.get(0)).getProjectileSpeed();
-        } catch (Exception e) {
-            throw new NotAnInstanceException("This weapon is not of kinetic fire type");
-        }
-    }
-
-    public int getRateOfFire() throws NotAnInstanceException {
-        try{
-            List<ObjectPlusPlus> obj = this.getLinks(KineticL);
-            return ((Kinetic) obj.get(0)).getRateOfFire();
-        } catch (Exception e) {
-            throw new NotAnInstanceException("This weapon is not of kinetic fire type");
-        }
-    }
-
-    public int getFrequency() throws NotAnInstanceException {
+    public Laser castLaser() throws NotAnInstanceException {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(LaserL);
-            return ((Laser) obj.get(0)).getFrequency();
+            return ((Laser) obj.get(0));
         } catch (Exception e) {
             throw new NotAnInstanceException("This weapon is not of laser fire type");
         }
     }
-
-    public int getWarheadMass() throws NotAnInstanceException {
+    public Rocket castRocket() throws NotAnInstanceException {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(RocketL);
-            return ((Rocket) obj.get(0)).getWarheadMass();
+            return ((Rocket) obj.get(0));
         } catch (Exception e) {
             throw new NotAnInstanceException("This weapon is not of rocket fire type");
         }

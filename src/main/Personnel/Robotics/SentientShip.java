@@ -63,13 +63,13 @@ public class SentientShip extends Ship implements IPerson {
     }
 
     @Override
-    public String getEmployerName() throws Exception {
-        return this.getPerson().getEmployerName();
+    public Person.Civilian castCivilian() throws Exception {
+        return this.getPerson().castCivilian();
     }
 
     @Override
-    public String getRank() throws Exception {
-        return this.getPerson().getRank();
+    public Person.Military castMilitary() throws Exception {
+        return this.getPerson().castMilitary();
     }
 
     @Override

@@ -105,24 +105,23 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
     }
 
     @Override
-    public String getEmployerName() throws NotAnInstanceException {
+    public Civilian castCivilian() throws NotAnInstanceException {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(KontraktL);
-            return ((Civilian) obj.get(0)).employerName;
+            return ((Civilian) obj.get(0));
         } catch (NoLinkException | IndexOutOfBoundsException e) {
             throw new NotAnInstanceException("This person is not a civilian");
         }
     }
 
     @Override
-    public String getRank() throws NotAnInstanceException {
+    public Military castMilitary() throws NotAnInstanceException {
         try{
             List<ObjectPlusPlus> obj = this.getLinks(SluzbaL);
-            return ((Military) obj.get(0)).rank;
+            return ((Military) obj.get(0));
         } catch (NoLinkException | IndexOutOfBoundsException e) {
             throw new NotAnInstanceException("This person is not in military");
         }
-
     }
 
     public class Civilian extends ObjectPlusPlus {
@@ -131,6 +130,10 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
         public Civilian(String employerName) {
             this.employerName = employerName;
         }
+
+        public String getEmployerName() {
+            return employerName;
+        }
     }
 
     public class Military extends ObjectPlusPlus {
@@ -138,6 +141,10 @@ public class Person extends ObjectPlusPlus implements Serializable, IPerson {
 
         public Military(String rank) {
             this.rank = rank;
+        }
+
+        public String getRank() {
+            return rank;
         }
     }
 }

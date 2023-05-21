@@ -25,6 +25,7 @@ public class MainInheritance {
 
 
         //multiinheritance
+        System.out.println("-------------Multiinheritance-------------");
         List<Ship> shipList = new LinkedList<>();
         List<IPerson> personList = new LinkedList<>();
 
@@ -41,38 +42,41 @@ public class MainInheritance {
         }
 
         //multiaspect
+        System.out.println("\n\n\n-------------Multiaspect-------------");
         ManuallyOperated manualLaserWeapon = new ManuallyOperated("Manualny laser", 50, 2, Laser.class, 100);
         Automatic automaticLaserWeapon = new Automatic("Automatyczny laser", 50, 50, "123.45beta", Laser.class, 200);
         ManuallyOperated manualKineticWeapon = new ManuallyOperated("Manualna armata", 50, 2, Kinetic.class, 300, 400, 500);
         Automatic automaticKineticWeapon = new Automatic("Automatyczna armata", 50, 50, "456.alfa", Kinetic.class, 600, 700, 800);
-        System.out.println("Częstotliwość manualnego lasera: " + manualLaserWeapon.getFrequency());
-        System.out.println("Częstotliwość automatycznego lasera: " + automaticLaserWeapon.getFrequency());
-        System.out.println("Prędkość pocisku z manualnej armaty: " + manualKineticWeapon.getProjectileSpeed());
-        System.out.println("Prędkość pocisku z automatycznej armaty: " + automaticKineticWeapon.getProjectileSpeed());
+        System.out.println("Częstotliwość manualnego lasera: " + manualLaserWeapon.castLaser().getFrequency());
+        System.out.println("Częstotliwość automatycznego lasera: " + automaticLaserWeapon.castLaser().getFrequency());
+        System.out.println("Prędkość pocisku z manualnej armaty: " + manualKineticWeapon.castKinetic().getProjectileSpeed());
+        System.out.println("Prędkość pocisku z automatycznej armaty: " + automaticKineticWeapon.castKinetic().getProjectileSpeed());
         System.out.println("Ilość operatorów manualnego lasera: " + manualLaserWeapon.getPersonnelCount());
         System.out.println("Wersja oprogramowania automatycznego lasera: " + automaticLaserWeapon.getSoftwareVersion());
         System.out.println("Ilość operatorów manualnej armaty: " + manualKineticWeapon.getPersonnelCount());
         System.out.println("Wersja oprogramowania automatycznej armaty: " + automaticKineticWeapon.getSoftwareVersion());
 
         //dynamic
+        System.out.println("\n\n\n-------------Dynamic-------------");
         IPerson person = sentientShip;
-        System.out.println("Zatrydniony przez: " + person.getEmployerName());
+        System.out.println("Zatrydniony przez: " + person.castCivilian().getEmployerName());
         try{
-            System.out.println("Ranga: " + person.getRank());
+            System.out.println("Ranga: " + person.castMilitary().getRank());
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
         }
         person.changeToMilitary("Generał");
-        System.out.println("Ranga: " + person.getRank());
+        System.out.println("Ranga: " + person.castMilitary().getRank());
         try{
-            System.out.println("Zatrydniony przez: " + person.getEmployerName());
+            System.out.println("Zatrydniony przez: " + person.castCivilian().getEmployerName());
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
         }
 
         //overlapping
+        System.out.println("\n\n\n-------------Overlapping-------------");
         List<String> scientificEquipment = new LinkedList<>();
         scientificEquipment.add("Skaner");
         scientificEquipment.add("Teleskop");
@@ -102,6 +106,7 @@ public class MainInheritance {
         System.out.println(combatScientificModule.getWeapons().toString());
 
         //klasa abstrakcyjna / polimorfizm
+        System.out.println("\n\n\n-------------Abstract/polimorfizm-------------");
         Ship ship = new CivilianShip(new Reactor(), "Eustachy", "ORP");
         System.out.println(ship.getDescription());
     }

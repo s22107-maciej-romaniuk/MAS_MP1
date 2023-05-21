@@ -18,7 +18,7 @@ public interface IPerson {
 
     void changeToMilitary(String rank) throws Exception;
 
-    String getEmployerName() throws Exception;
+    Person.Civilian castCivilian() throws Exception;
 
-    String getRank() throws Exception;
+    Person.Military castMilitary() throws Exception;
 }
