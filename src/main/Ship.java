@@ -102,7 +102,7 @@ public abstract class Ship extends ObjectPlusPlus {
     //atrybut klasowy
     //protected abstract Person getCoordinator();
     public String getDescription() throws Exception {
-        return "Abstract";
+        return this.toString();
     }
 
     //=======================================

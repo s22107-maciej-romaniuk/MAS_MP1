@@ -75,8 +75,7 @@ public class SentientShip extends Ship implements IPerson {
     @Override
     public String getDescription() throws Exception {
         StringBuilder b = new StringBuilder();
-        b.append(String.format("Sentient ship %s %s\n", this.prefixName, this.shipName));
-        b.append(String.format("Persona name: %s\n", this.getName()));
+        b.append(String.format("Sentient ship %s %s", this.prefixName, this.shipName));
 
         return b.toString();
     }

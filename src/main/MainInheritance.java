@@ -26,20 +26,10 @@ public class MainInheritance {
 
         //multiinheritance
         System.out.println("-------------Multiinheritance-------------");
-        List<Ship> shipList = new LinkedList<>();
-        List<IPerson> personList = new LinkedList<>();
-
         SentientShip sentientShip = new SentientShip(new Reactor(), "Test", "HMS", "Maciej", Civilian.class, "Transport Inc.");
-        shipList.add(sentientShip);
-        personList.add(sentientShip);
-        for (Ship ship:
-             shipList) {
-            System.out.println(ship.toString());
-        }
-        for (IPerson person:
-                personList) {
-            System.out.println(person.getName());
-        }
+        System.out.println(sentientShip.getDescription());
+        System.out.println(sentientShip.getName());
+
 
         //multiaspect
         System.out.println("\n\n\n-------------Multiaspect-------------");
@@ -59,7 +49,7 @@ public class MainInheritance {
         //dynamic
         System.out.println("\n\n\n-------------Dynamic-------------");
         IPerson person = sentientShip;
-        System.out.println("Zatrydniony przez: " + person.castCivilian().getEmployerName());
+        System.out.println("Zatrudniony przez: " + person.castCivilian().getEmployerName());
         try{
             System.out.println("Ranga: " + person.castMilitary().getRank());
         }
@@ -69,7 +59,7 @@ public class MainInheritance {
         person.changeToMilitary("Generał");
         System.out.println("Ranga: " + person.castMilitary().getRank());
         try{
-            System.out.println("Zatrydniony przez: " + person.castCivilian().getEmployerName());
+            System.out.println("Zatrudniony przez: " + person.castCivilian().getEmployerName());
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
